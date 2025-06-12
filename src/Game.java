@@ -7,13 +7,13 @@ import java.awt.GridLayout;
 public class Game{
     JFrame window;
     Container con;
-    JPanel titleNamePanel, startButtonPanel, mainTextPanel, choiceButtonPanel, playerPanel;
+    JPanel titleNamePanel, startButtonPanel, mainTextPanel, choiceButtonPanel, itemPanel;
     JLabel titleNameLabel;
-    JButton startButton, opt1, opt2, opt3, opt4;
+    JButton startButton, opt1, opt2, opt3, opt4, itemButton;
     JTextArea mainTextArea;
 
     Font titleFont = new Font("Times New Roman", Font.PLAIN, 90);
-    Font normalFont = new Font("Times New Roman", Font.PLAIN, 30);
+    Font normalFont = new Font("Times New Roman", Font.PLAIN, 26);
     
     public static void main(String[] args){
         new Game();
@@ -81,7 +81,7 @@ public class Game{
         con.add(mainTextPanel);
 
         choiceButtonPanel = new JPanel();
-        choiceButtonPanel.setBounds(250, 350, 300, 150);
+        choiceButtonPanel.setBounds(450, 375, 300, 150);
         choiceButtonPanel.setBackground(Color.black);
         choiceButtonPanel.setLayout(new GridLayout(4, 1));
 
@@ -112,11 +112,16 @@ public class Game{
         opt4.setFont(normalFont);
         choiceButtonPanel.add(opt4);
 
-        playerPanel = new JPanel();
-        playerPanel.setBounds(100, 15, 600, 50);
-        playerPanel.setBackground(Color.blue);
-        playerPanel.setLayout(new GridLayout(1, 4));
+        itemPanel = new JPanel();
+        itemPanel.setBounds(50, 470, 150, 50);
+        itemPanel.setBackground(Color.black);
 
-        con.add(playerPanel);
+        con.add(itemPanel);
+
+        itemButton = new JButton("Inventário");
+        itemButton.setBackground(Color.black);
+        itemButton.setForeground(Color.white);
+        itemButton.setFont(normalFont);
+        itemPanel.add(itemButton);
     }
 }
