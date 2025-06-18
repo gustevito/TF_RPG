@@ -7,9 +7,9 @@ import java.awt.GridLayout;
 public class Game{
     JFrame window;
     Container con;
-    JPanel titleNamePanel, startButtonPanel, mainTextPanel, choiceButtonPanel, itemPanel;
+    JPanel titleNamePanel, startButtonPanel, mainTextPanel, choiceButtonPanel, inventoryButtonPanel, inventoryPanel, inventoryClosePanel;
     JLabel titleNameLabel;
-    JButton startButton, opt1, opt2, opt3, opt4, itemButton;
+    JButton startButton, opt1, opt2, opt3, opt4, inventoryButton, item1, item2, item3, item4, item5, inventoryCloseButton;
     JTextArea mainTextArea;
 
     Font titleFont = new Font("Times New Roman", Font.PLAIN, 90);
@@ -63,14 +63,24 @@ public class Game{
     }
 
     public void createGameScreen(){
+        // limpa o menu principal
         titleNamePanel.setVisible(false);
         startButtonPanel.setVisible(false);
+        
+        // limpa a tela de inventário se existir
+        if(inventoryPanel != null) {
+            inventoryPanel.setVisible(false);
+        }
+        if(inventoryClosePanel != null) {
+            inventoryClosePanel.setVisible(false);
+        }
+
 
         mainTextPanel = new JPanel();
         mainTextPanel.setBounds(100, 100, 600, 250);
         mainTextPanel.setBackground(Color.black);
 
-        mainTextArea = new JTextArea("Essa é a área principal de texto do jogo. Teasmlmlsdm klsdm kasrmk lkrm ldmkldrm lrasdmlkdm krs mlkdmm aslksdmkl");
+        mainTextArea = new JTextArea("Essa é a área principal de texto do jogo, onde a história  será descrita e o caminho do jogador traçado.");
         mainTextArea.setBounds(100, 100, 600, 250);
         mainTextArea.setBackground(Color.black);
         mainTextArea.setForeground(Color.white);
@@ -80,6 +90,8 @@ public class Game{
         
         con.add(mainTextPanel);
 
+
+        // botoes de seleçao
         choiceButtonPanel = new JPanel();
         choiceButtonPanel.setBounds(450, 375, 300, 150);
         choiceButtonPanel.setBackground(Color.black);
@@ -87,7 +99,6 @@ public class Game{
 
         con.add(choiceButtonPanel);
 
-        // botoes
         opt1 = new JButton("Opção 1");
         opt1.setBackground(Color.black);
         opt1.setForeground(Color.white);
@@ -112,16 +123,79 @@ public class Game{
         opt4.setFont(normalFont);
         choiceButtonPanel.add(opt4);
 
-        itemPanel = new JPanel();
-        itemPanel.setBounds(50, 470, 150, 50);
-        itemPanel.setBackground(Color.black);
 
-        con.add(itemPanel);
+        // botao de inventario
+        inventoryButtonPanel = new JPanel();
+        inventoryButtonPanel.setBounds(50, 470, 150, 50);
+        inventoryButtonPanel.setBackground(Color.black);
 
-        itemButton = new JButton("Inventário");
-        itemButton.setBackground(Color.black);
-        itemButton.setForeground(Color.white);
-        itemButton.setFont(normalFont);
-        itemPanel.add(itemButton);
+        con.add(inventoryButtonPanel);
+
+        inventoryButton = new JButton("Inventário");
+        inventoryButton.setBackground(Color.black);
+        inventoryButton.setForeground(Color.white);
+        inventoryButton.setFont(normalFont);
+        inventoryButton.addActionListener((e)-> createInventoryScreen());
+
+        inventoryButtonPanel.add(inventoryButton);
+    }
+
+    public void createInventoryScreen(){
+        mainTextPanel.setVisible(false);
+        choiceButtonPanel.setVisible(false);
+        inventoryButtonPanel.setVisible(false);
+
+        inventoryPanel = new JPanel();
+        inventoryPanel.setBounds(100, 100, 600, 150);
+        inventoryPanel.setBackground(Color.blue);
+        inventoryPanel.setLayout(new GridLayout(1,5));
+
+        item1 = new JButton();
+        item1.setBackground(Color.black);
+        item1.setForeground(Color.white);
+        item1.setFont(normalFont);
+        inventoryPanel.add(item1);
+        
+        item2 = new JButton();
+        item2.setBackground(Color.black);
+        item2.setForeground(Color.white);
+        item2.setFont(normalFont);
+        inventoryPanel.add(item2);
+        
+        item3 = new JButton();
+        item3.setBackground(Color.black);
+        item3.setForeground(Color.white);
+        item3.setFont(normalFont);
+        inventoryPanel.add(item3);
+        
+        item4 = new JButton();
+        item4.setBackground(Color.black);
+        item4.setForeground(Color.white);
+        item4.setFont(normalFont);
+        inventoryPanel.add(item4);
+        
+        item5 = new JButton();
+        item5.setBackground(Color.black);
+        item5.setForeground(Color.white);
+        item5.setFont(normalFont);
+        inventoryPanel.add(item5);
+
+        con.add(inventoryPanel);
+
+
+        // fechar inventario
+        inventoryClosePanel = new JPanel();
+        inventoryClosePanel.setBounds(50, 470, 150, 50);
+        inventoryClosePanel.setBackground(Color.black);
+
+        con.add(inventoryClosePanel);
+
+        inventoryCloseButton = new JButton("X");
+        inventoryCloseButton.setBackground(Color.black);
+        inventoryCloseButton.setForeground(Color.white);
+        inventoryCloseButton.setFont(normalFont);
+        inventoryCloseButton.addActionListener((e)-> createGameScreen());
+
+        inventoryClosePanel.add(inventoryCloseButton);        
     }
 }
