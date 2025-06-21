@@ -1,4 +1,6 @@
 import javax.swing.*;
+
+import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Font;
@@ -34,7 +36,7 @@ public class Game{
         titleNamePanel.setBackground(Color.black);
         
         // label do título
-        titleNameLabel = new JLabel("BOMBA!!!");
+        titleNameLabel = new JLabel("BOMBA");
         titleNameLabel.setForeground(Color.white);
         titleNameLabel.setFont(titleFont);
         
@@ -96,34 +98,21 @@ public class Game{
         choiceButtonPanel.setBounds(450, 375, 300, 150);
         choiceButtonPanel.setBackground(Color.black);
         choiceButtonPanel.setLayout(new GridLayout(4, 1));
-
         con.add(choiceButtonPanel);
 
-        opt1 = new JButton("Opção 1");
-        opt1.setBackground(Color.black);
-        opt1.setForeground(Color.white);
-        opt1.setFont(normalFont);
+        opt1 = new ChoiceButton("Opção 1", normalFont);
         choiceButtonPanel.add(opt1);
 
-        opt2 = new JButton("Opção 1");
-        opt2.setBackground(Color.black);
-        opt2.setForeground(Color.white);
-        opt2.setFont(normalFont);
+        opt2 = new ChoiceButton("Opção 2", normalFont);
         choiceButtonPanel.add(opt2);
-        
-        opt3 = new JButton("Opção 1");
-        opt3.setBackground(Color.black);
-        opt3.setForeground(Color.white);
-        opt3.setFont(normalFont);
+
+        opt3 = new ChoiceButton("Opção 3", normalFont);
         choiceButtonPanel.add(opt3);
-        
-        opt4 = new JButton("Opção 1");
-        opt4.setBackground(Color.black);
-        opt4.setForeground(Color.white);
-        opt4.setFont(normalFont);
+
+        opt4 = new ChoiceButton("Opção 4", normalFont);
         choiceButtonPanel.add(opt4);
 
-
+        
         // botao de inventario
         inventoryButtonPanel = new JPanel();
         inventoryButtonPanel.setBounds(50, 470, 150, 50);
