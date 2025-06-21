@@ -11,7 +11,7 @@ public class Game{
     Container con;
     JPanel titleNamePanel, startButtonPanel, mainTextPanel, choiceButtonPanel, inventoryButtonPanel, inventoryPanel, inventoryClosePanel;
     JLabel titleNameLabel;
-    JButton startButton, opt1, opt2, opt3, opt4, inventoryButton, item1, item2, item3, item4, item5, inventoryCloseButton;
+    JButton startButton, opt1, opt2, opt3, voltar, inventoryButton, item1, item2, item3, item4, item5, inventoryCloseButton;
     JTextArea mainTextArea;
 
     Font titleFont = new Font("Times New Roman", Font.PLAIN, 90);
@@ -109,8 +109,8 @@ public class Game{
         opt3 = new ChoiceButton("Opção 3", normalFont);
         choiceButtonPanel.add(opt3);
 
-        opt4 = new ChoiceButton("Opção 4", normalFont);
-        choiceButtonPanel.add(opt4);
+        voltar = new ChoiceButton("Voltar", normalFont);
+        choiceButtonPanel.add(voltar);
 
         
         // botao de inventario
@@ -139,34 +139,19 @@ public class Game{
         inventoryPanel.setBackground(Color.blue);
         inventoryPanel.setLayout(new GridLayout(1,5));
 
-        item1 = new JButton();
-        item1.setBackground(Color.black);
-        item1.setForeground(Color.white);
-        item1.setFont(normalFont);
+        item1 = new ItemButton("Item", normalFont);
         inventoryPanel.add(item1);
         
-        item2 = new JButton();
-        item2.setBackground(Color.black);
-        item2.setForeground(Color.white);
-        item2.setFont(normalFont);
+        item2 = new ItemButton("Item", normalFont);
         inventoryPanel.add(item2);
-        
-        item3 = new JButton();
-        item3.setBackground(Color.black);
-        item3.setForeground(Color.white);
-        item3.setFont(normalFont);
+
+        item3 = new ItemButton("Item", normalFont);
         inventoryPanel.add(item3);
-        
-        item4 = new JButton();
-        item4.setBackground(Color.black);
-        item4.setForeground(Color.white);
-        item4.setFont(normalFont);
+
+        item4 = new ItemButton("Item", normalFont);
         inventoryPanel.add(item4);
-        
-        item5 = new JButton();
-        item5.setBackground(Color.black);
-        item5.setForeground(Color.white);
-        item5.setFont(normalFont);
+
+        item5 = new ItemButton("Item", normalFont);
         inventoryPanel.add(item5);
 
         con.add(inventoryPanel);
