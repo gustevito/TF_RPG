@@ -1,5 +1,6 @@
 import javax.swing.*;
 
+import buttons.*;
 import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Container;
@@ -170,6 +171,6 @@ public class Game{
         inventoryCloseButton.setFont(normalFont);
         inventoryCloseButton.addActionListener((e)-> createGameScreen());
 
-        inventoryClosePanel.add(inventoryCloseButton);        
+        inventoryClosePanel.add(inventoryCloseButton);
     }
 }
