@@ -12,8 +12,10 @@ public class Game{
     Container con;
     JPanel titleNamePanel, startButtonPanel, mainTextPanel, continueButtonPanel, choiceButtonPanel, inventoryButtonPanel, inventoryPanel, inventoryClosePanel;
     JLabel titleNameLabel;
-    JButton startButton, continueButton, opt1, opt2, opt3, voltar, inventoryButton, item1, item2, item3, item4, item5, inventoryCloseButton;
+    JButton startButton, continueButton, choice1, choice2, choice3, choice4, inventoryButton, item1, item2, item3, item4, item5, inventoryCloseButton;
     JTextArea mainTextArea;
+
+    String position;
 
     Font titleFont = new Font("Times New Roman", Font.PLAIN, 90);
     Font normalFont = new Font("Times New Roman", Font.PLAIN, 26);
@@ -66,15 +68,78 @@ public class Game{
     }
 
     public void introScreen(){
-        // limpa o menu principal
-        titleNamePanel.setVisible(false);
-        startButtonPanel.setVisible(false);
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("O ano é 1997. Dois terroristas conhecidos por cometerem crimes hediondos cercados por charadas, plantaram uma bomba no 6º andar de um prédio comercial no centro da cidade de Porto Alegre.\n\nVocê, um renomado sargento aposentado do esquadrão antibombas do BOPE, foi a única pessoa confiada para resolver este caso.\n\nAja com cautela. Suas ações terão consequências.");
+        createContinueButton();
+    }
 
+    public void createGameScreen(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("Você está no saguão principal. A única informação concedida a você, é de que a bomba está trancada no acervo do escritório, ao lado da sala de reuniões.\n\nAos seus pés, você encontra um Walkie-talkie.\nO que você faz?");
+        createChoiceButtons();
+
+        choice1.setText("Pegar Walkie-talkie");
+        choice1.addActionListener((e) -> System.out.println("Pegou walkie-talkie"));
+        
+        choice2.setText("Ir ao corredor principal");
+        choice2.addActionListener((e) -> System.out.println("Foi ao corredor"));
+        
+        choice3.setText("Sair");
+        choice3.addActionListener((e) -> sair());
+        
+        createInventoryButton();
+    }
+
+    public void sair(){
+        clearPanels();
+        position = "sair";
+        createTextPanel();
+        mainTextArea.setText("Se você sair do prédio, irá fracassar na missão, e a bomba irá explodir...\n\n Você tem certeza?");
+        createChoiceButtons();
+        
+        choice1.setText("Sim");
+        choice1.addActionListener((e) -> lose());
+
+        choice2.setText("Não");
+        choice2.addActionListener((e) -> createGameScreen());
+    }
+
+    public void lose(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("Por sua culpa, a bomba explodiu e causou danos irreparáveis para a cidade. Parabéns!\n\nVocê perdeu.\n\n Deseja tentar novamente?");
+        createChoiceButtons();
+        choice1.setText("Sim");
+        choice1.addActionListener((e) -> introScreen());
+        
+        choice2.setText("Não");
+        choice2.addActionListener((e) -> System.exit(0));
+    }
+
+    public void createInventoryScreen(){
+        // esconder painéis
+        if (mainTextPanel != null) mainTextPanel.setVisible(false);
+        if (choiceButtonPanel != null) choiceButtonPanel.setVisible(false);
+        if (inventoryButtonPanel != null) inventoryButtonPanel.setVisible(false);
+        if (continueButtonPanel != null) continueButtonPanel.setVisible(false);
+
+        createInventoryPanel();
+        createCloseInventoryButton();
+    }
+
+    // métodos auxiliares
+    private void createTextPanel() {
+        if (mainTextPanel != null) {
+            con.remove(mainTextPanel);
+        }
+        
         mainTextPanel = new JPanel();
         mainTextPanel.setBounds(100, 100, 600, 250);
         mainTextPanel.setBackground(Color.black);
-
-        mainTextArea = new JTextArea("O ano é 1997. Dois terroristas plantaram uma bomba no 6º andar de um prédio comercial no centro da cidade de Porto Alegre, e você, sargento aposentado do esquadrão antibombas do BOPE, foi a única pessoa confiada para resolver este caso.\n\nAja com cautela. Suas ações terão consequências.");
+        
+        mainTextArea = new JTextArea();
         mainTextArea.setBounds(100, 100, 600, 250);
         mainTextArea.setEditable(false);
         mainTextArea.setBackground(Color.black);
@@ -82,120 +147,176 @@ public class Game{
         mainTextArea.setFont(normalFont);
         mainTextArea.setLineWrap(true);
         mainTextArea.setWrapStyleWord(true);
-        mainTextPanel.add(mainTextArea);
         
+        mainTextPanel.add(mainTextArea);
         con.add(mainTextPanel);
-
-        // botao de continuar
+        mainTextPanel.setVisible(true);
+    }
+    
+    private void createContinueButton() {
+        if (continueButtonPanel != null) {
+            con.remove(continueButtonPanel);
+        }
+        
         continueButtonPanel = new JPanel();
         continueButtonPanel.setBounds(50, 470, 150, 50);
         continueButtonPanel.setBackground(Color.black);
-
-        con.add(continueButtonPanel);
 
         continueButton = new JButton("Continuar");
         continueButton.setBackground(Color.black);
         continueButton.setForeground(Color.white);
         continueButton.setFont(normalFont);
-        continueButton.addActionListener((e)-> createGameScreen());
+        continueButton.addActionListener((e) -> createGameScreen());
 
         continueButtonPanel.add(continueButton);
+        con.add(continueButtonPanel);
+        continueButtonPanel.setVisible(true);
     }
-
-    public void createGameScreen(){
-        // limpa o botao da intro
-        continueButtonPanel.setVisible(false);
-        
-        // limpa a tela de inventário se existir
-        if(inventoryPanel != null) {
-            inventoryPanel.setVisible(false);
-        }
-        if(inventoryClosePanel != null) {
-            inventoryClosePanel.setVisible(false);
+    
+    private void createChoiceButtons() {
+        if (choiceButtonPanel != null) {
+            con.remove(choiceButtonPanel);
         }
         
-        mainTextPanel.setVisible(true);
-        mainTextArea.setText("Você está no saguão principal. A única informação concedida a você, é de que a bomba está trancada no acervo do escritório, ao lado da sala de reuniões.\n\nAos seus pés, você encontra um Walkie-talkie.\nO que você faz?");
-
-        // botoes de seleçao
         choiceButtonPanel = new JPanel();
         choiceButtonPanel.setBounds(450, 375, 300, 150);
         choiceButtonPanel.setBackground(Color.black);
         choiceButtonPanel.setLayout(new GridLayout(4, 1));
-        con.add(choiceButtonPanel);
 
-        opt1 = new ChoiceButton("Pegar Walkie-talkie", normalFont);
-        choiceButtonPanel.add(opt1);
+        choice1 = new ChoiceButton("", normalFont);
+        choice2 = new ChoiceButton("", normalFont);
+        choice3 = new ChoiceButton("", normalFont);
+        choice4 = new ChoiceButton("", normalFont);
 
-        opt2 = new ChoiceButton("Ir ao corredor principal", normalFont);
-        choiceButtonPanel.add(opt2);
-
-        opt3 = new ChoiceButton("Sair", normalFont);
-        choiceButtonPanel.add(opt3);
-
-        voltar = new ChoiceButton(" ", normalFont);
-        choiceButtonPanel.add(voltar);
-
+        choiceButtonPanel.add(choice1);
+        choiceButtonPanel.add(choice2);
+        choiceButtonPanel.add(choice3);
+        choiceButtonPanel.add(choice4);
         
-        // botao de inventario
+        con.add(choiceButtonPanel);
+        choiceButtonPanel.setVisible(true);
+    }
+    
+    private void createInventoryButton() {
+        if (inventoryButtonPanel != null) {
+            con.remove(inventoryButtonPanel);
+        }
+        
         inventoryButtonPanel = new JPanel();
         inventoryButtonPanel.setBounds(50, 470, 150, 50);
         inventoryButtonPanel.setBackground(Color.black);
-
-        con.add(inventoryButtonPanel);
 
         inventoryButton = new JButton("Inventário");
         inventoryButton.setBackground(Color.black);
         inventoryButton.setForeground(Color.white);
         inventoryButton.setFont(normalFont);
-        inventoryButton.addActionListener((e)-> createInventoryScreen());
+        inventoryButton.addActionListener((e) -> createInventoryScreen());
 
         inventoryButtonPanel.add(inventoryButton);
+        con.add(inventoryButtonPanel);
+        inventoryButtonPanel.setVisible(true);
     }
-
-    public void createInventoryScreen(){
-        mainTextPanel.setVisible(false);
-        choiceButtonPanel.setVisible(false);
-        inventoryButtonPanel.setVisible(false);
-
+    
+    private void createInventoryPanel() {
+        if (inventoryPanel != null) {
+            con.remove(inventoryPanel);
+        }
+        
         inventoryPanel = new JPanel();
         inventoryPanel.setBounds(100, 100, 600, 150);
         inventoryPanel.setBackground(Color.blue);
-        inventoryPanel.setLayout(new GridLayout(1,5));
+        inventoryPanel.setLayout(new GridLayout(1, 5));
 
         item1 = new ItemButton("Item", normalFont);
-        inventoryPanel.add(item1);
-        
         item2 = new ItemButton("Item", normalFont);
-        inventoryPanel.add(item2);
-
         item3 = new ItemButton("Item", normalFont);
-        inventoryPanel.add(item3);
-
         item4 = new ItemButton("Item", normalFont);
-        inventoryPanel.add(item4);
-
         item5 = new ItemButton("Item", normalFont);
+        
+        inventoryPanel.add(item1);
+        inventoryPanel.add(item2);
+        inventoryPanel.add(item3);
+        inventoryPanel.add(item4);
         inventoryPanel.add(item5);
 
         con.add(inventoryPanel);
-
-
-        // fechar inventario
+        inventoryPanel.setVisible(true);
+    }
+    
+    private void createCloseInventoryButton() {
+        if (inventoryClosePanel != null) {
+            con.remove(inventoryClosePanel);
+        }
+        
         inventoryClosePanel = new JPanel();
         inventoryClosePanel.setBounds(50, 470, 150, 50);
         inventoryClosePanel.setBackground(Color.black);
-
-        con.add(inventoryClosePanel);
 
         inventoryCloseButton = new JButton("X");
         inventoryCloseButton.setBackground(Color.black);
         inventoryCloseButton.setForeground(Color.white);
         inventoryCloseButton.setFont(normalFont);
-        inventoryCloseButton.addActionListener((e)-> createGameScreen());
+        inventoryCloseButton.addActionListener((e) -> createGameScreen());
 
         inventoryClosePanel.add(inventoryCloseButton);
+        con.add(inventoryClosePanel);
+        inventoryClosePanel.setVisible(true);
     }
 
+    private void clearPanels() {
+        // array com os paineis (dá pra melhorar mais eu acho)
+        JPanel[] paineis = {
+            titleNamePanel, startButtonPanel, mainTextPanel, continueButtonPanel,
+            choiceButtonPanel, inventoryButtonPanel, inventoryPanel, inventoryClosePanel
+        };
+        
+        // remove todos os paineis do container
+        for (JPanel painel : paineis) {
+            if (painel != null) {
+                painel.setVisible(false);
+                con.remove(painel);
+            }
+        }
+        con.revalidate();
+        con.repaint();
+    }
 
+    // versão inicial gambiarrenta:
+
+    /*private void clearPanels() {
+        if (titleNamePanel != null) {
+            titleNamePanel.setVisible(false);
+            con.remove(titleNamePanel);
+        }
+        if (startButtonPanel != null) {
+            startButtonPanel.setVisible(false);
+            con.remove(startButtonPanel);
+        }
+        if (mainTextPanel != null) {
+            mainTextPanel.setVisible(false);
+            con.remove(mainTextPanel);
+        }
+        if (continueButtonPanel != null) {
+            continueButtonPanel.setVisible(false);
+            con.remove(continueButtonPanel);
+        }
+        if (choiceButtonPanel != null) {
+            choiceButtonPanel.setVisible(false);
+            con.remove(choiceButtonPanel);
+        }
+        if (inventoryButtonPanel != null) {
+            inventoryButtonPanel.setVisible(false);
+            con.remove(inventoryButtonPanel);
+        }
+        if (inventoryPanel != null) {
+            inventoryPanel.setVisible(false);
+            con.remove(inventoryPanel);
+        }
+        if (inventoryClosePanel != null) {
+            inventoryClosePanel.setVisible(false);
+            con.remove(inventoryClosePanel);
+        }
+        con.revalidate();
+        con.repaint();
+    }*/
 }
