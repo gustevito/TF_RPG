@@ -1,7 +1,7 @@
 import javax.swing.*;
 
-import buttons.*;
-import java.awt.Choice;
+import gameui.*;
+
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Font;
@@ -10,9 +10,9 @@ import java.awt.GridLayout;
 public class Game{
     JFrame window;
     Container con;
-    JPanel titleNamePanel, startButtonPanel, mainTextPanel, choiceButtonPanel, inventoryButtonPanel, inventoryPanel, inventoryClosePanel;
+    JPanel titleNamePanel, startButtonPanel, mainTextPanel, continueButtonPanel, choiceButtonPanel, inventoryButtonPanel, inventoryPanel, inventoryClosePanel;
     JLabel titleNameLabel;
-    JButton startButton, opt1, opt2, opt3, voltar, inventoryButton, item1, item2, item3, item4, item5, inventoryCloseButton;
+    JButton startButton, continueButton, opt1, opt2, opt3, voltar, inventoryButton, item1, item2, item3, item4, item5, inventoryCloseButton;
     JTextArea mainTextArea;
 
     Font titleFont = new Font("Times New Roman", Font.PLAIN, 90);
@@ -51,7 +51,7 @@ public class Game{
         startButton.setBackground(Color.black);
         startButton.setForeground(Color.white);
         startButton.setFont(normalFont);
-        startButton.addActionListener((e)-> createGameScreen()); // lambda pra nao precisar de um handler
+        startButton.addActionListener((e)-> introScreen()); // lambda pra nao precisar de um handler
 
         // adicionar componentes aos painéis
         titleNamePanel.add(titleNameLabel);
@@ -65,10 +65,46 @@ public class Game{
         window.setVisible(true);
     }
 
-    public void createGameScreen(){
+    public void introScreen(){
         // limpa o menu principal
         titleNamePanel.setVisible(false);
         startButtonPanel.setVisible(false);
+
+        mainTextPanel = new JPanel();
+        mainTextPanel.setBounds(100, 100, 600, 250);
+        mainTextPanel.setBackground(Color.black);
+
+        mainTextArea = new JTextArea("O ano é 1997. Dois terroristas plantaram uma bomba no 6º andar de um prédio comercial no centro da cidade de Porto Alegre, e você, sargento aposentado do esquadrão antibombas do BOPE, foi a única pessoa confiada para resolver este caso.\n\nAja com cautela. Suas ações terão consequências.");
+        mainTextArea.setBounds(100, 100, 600, 250);
+        mainTextArea.setEditable(false);
+        mainTextArea.setBackground(Color.black);
+        mainTextArea.setForeground(Color.white);
+        mainTextArea.setFont(normalFont);
+        mainTextArea.setLineWrap(true);
+        mainTextArea.setWrapStyleWord(true);
+        mainTextPanel.add(mainTextArea);
+        
+        con.add(mainTextPanel);
+
+        // botao de continuar
+        continueButtonPanel = new JPanel();
+        continueButtonPanel.setBounds(50, 470, 150, 50);
+        continueButtonPanel.setBackground(Color.black);
+
+        con.add(continueButtonPanel);
+
+        continueButton = new JButton("Continuar");
+        continueButton.setBackground(Color.black);
+        continueButton.setForeground(Color.white);
+        continueButton.setFont(normalFont);
+        continueButton.addActionListener((e)-> createGameScreen());
+
+        continueButtonPanel.add(continueButton);
+    }
+
+    public void createGameScreen(){
+        // limpa o botao da intro
+        continueButtonPanel.setVisible(false);
         
         // limpa a tela de inventário se existir
         if(inventoryPanel != null) {
@@ -77,22 +113,9 @@ public class Game{
         if(inventoryClosePanel != null) {
             inventoryClosePanel.setVisible(false);
         }
-
-
-        mainTextPanel = new JPanel();
-        mainTextPanel.setBounds(100, 100, 600, 250);
-        mainTextPanel.setBackground(Color.black);
-
-        mainTextArea = new JTextArea("Essa é a área principal de texto do jogo, onde a história  será descrita e o caminho do jogador traçado.");
-        mainTextArea.setBounds(100, 100, 600, 250);
-        mainTextArea.setBackground(Color.black);
-        mainTextArea.setForeground(Color.white);
-        mainTextArea.setFont(normalFont);
-        mainTextArea.setLineWrap(true);
-        mainTextPanel.add(mainTextArea);
         
-        con.add(mainTextPanel);
-
+        mainTextPanel.setVisible(true);
+        mainTextArea.setText("Você está no saguão principal. A única informação concedida a você, é de que a bomba está trancada no acervo do escritório, ao lado da sala de reuniões.\n\nAos seus pés, você encontra um Walkie-talkie.\nO que você faz?");
 
         // botoes de seleçao
         choiceButtonPanel = new JPanel();
@@ -101,16 +124,16 @@ public class Game{
         choiceButtonPanel.setLayout(new GridLayout(4, 1));
         con.add(choiceButtonPanel);
 
-        opt1 = new ChoiceButton("Opção 1", normalFont);
+        opt1 = new ChoiceButton("Pegar Walkie-talkie", normalFont);
         choiceButtonPanel.add(opt1);
 
-        opt2 = new ChoiceButton("Opção 2", normalFont);
+        opt2 = new ChoiceButton("Ir ao corredor principal", normalFont);
         choiceButtonPanel.add(opt2);
 
-        opt3 = new ChoiceButton("Opção 3", normalFont);
+        opt3 = new ChoiceButton("Sair", normalFont);
         choiceButtonPanel.add(opt3);
 
-        voltar = new ChoiceButton("Voltar", normalFont);
+        voltar = new ChoiceButton(" ", normalFont);
         choiceButtonPanel.add(voltar);
 
         
@@ -173,4 +196,6 @@ public class Game{
 
         inventoryClosePanel.add(inventoryCloseButton);
     }
+
+
 }
