@@ -6,6 +6,8 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class Game{
     JFrame window;
@@ -15,7 +17,8 @@ public class Game{
     JButton startButton, continueButton, choice1, choice2, choice3, choice4, inventoryButton, item1, item2, item3, item4, item5, inventoryCloseButton;
     JTextArea mainTextArea;
 
-    String position;
+    private ArrayList<String> inventory = new ArrayList<>();
+    private final int MAX_INVENTORY_SIZE = 5;
 
     Font titleFont = new Font("Times New Roman", Font.PLAIN, 90);
     Font normalFont = new Font("Times New Roman", Font.PLAIN, 26);
@@ -70,31 +73,120 @@ public class Game{
     public void introScreen(){
         clearPanels();
         createTextPanel();
-        mainTextArea.setText("O ano é 1997. Dois terroristas conhecidos por cometerem crimes hediondos cercados por charadas, plantaram uma bomba no 6º andar de um prédio comercial no centro da cidade de Porto Alegre.\n\nVocê, um renomado sargento aposentado do esquadrão antibombas do BOPE, foi a única pessoa confiada para resolver este caso.\n\nAja com cautela. Suas ações terão consequências.");
+        mainTextArea.setText("O ano é 1997. Um terrorista conhecido por cometer crimes hediondos cercados por charadas, plantou uma bomba no 6º andar de um prédio comercial no centro da cidade de Porto Alegre.\n\nVocê, um renomado sargento aposentado do esquadrão antibombas do BOPE, foi a única pessoa confiada para resolver este caso.\n\nAja com cautela. Suas ações terão consequências.");
         createContinueButton();
     }
 
     public void createGameScreen(){
         clearPanels();
         createTextPanel();
-        mainTextArea.setText("Você está no saguão principal. A única informação concedida a você, é de que a bomba está trancada no acervo do escritório, ao lado da sala de reuniões.\n\nAos seus pés, você encontra um Walkie-talkie.\nO que você faz?");
+        mainTextArea.setText("Você está no saguão principal. A única informação concedida a você, é de que a bomba está trancada no acervo do escritório, ao lado da sala de reuniões.\n\nÀ sua esquerda e à sua direita, estende-se um corredor com diversas salas, e aos seus pés, você encontra um gravador.\nO que você faz?");
         createChoiceButtons();
 
-        choice1.setText("Pegar Walkie-talkie");
-        choice1.addActionListener((e) -> System.out.println("Pegou walkie-talkie"));
+        choice1.setText("Pegar gravador");
+        choice1.addActionListener((e) -> gravador());
         
-        choice2.setText("Ir ao corredor principal");
-        choice2.addActionListener((e) -> System.out.println("Foi ao corredor"));
+        choice2.setText("Corredor esquerdo");
+        choice2.addActionListener((e) -> corredorEsquerdo());
         
-        choice3.setText("Sair");
-        choice3.addActionListener((e) -> sair());
+        choice3.setText("Corredor direito");
+        choice3.addActionListener((e) -> System.out.println("Foi ao corredor"));
+
+        choice4.setText("Sair");
+        choice4.addActionListener((e) -> sair());
         
         createInventoryButton();
     }
 
+    public void gravador(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("*(clique)* ...\n\n ...Sabe, Sargento... Tem gente que só anda sozinho... Não se mistura, não se divide.\n\nPense ao contrário para talvez salvá-los de meu joguinho. Heheheh...");
+        createCloseInventoryButton((e)-> createGameScreen());
+    }
+
+    public void corredorEsquerdo(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("Você virou à esquerda no corredor, e consegue agora enxergar a porta para o refeitório, um banheiro, e ao fim do corredor, a sala do CEO.\n\nPara onde você vai?");
+        createChoiceButtons();
+
+        choice1.setText("Refeitório");
+        choice1.addActionListener((e) -> refeitorio());
+        
+        choice2.setText("Sala do CEO");
+        choice2.addActionListener((e) -> System.out.println("Foi ao corredor"));
+        
+        choice3.setText("Banheiro");
+        choice3.addActionListener((e) -> System.out.println("Foi ao corredor"));
+
+        choice4.setText("Voltar");
+        choice4.addActionListener((e) -> createGameScreen());
+        
+        createInventoryButton();
+    }
+
+    public void refeitorio(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("Os copos de plástico e restos de comida espalhados pelo chão revelam uma reação desesperada dos funcionários... Algo interrompeu a pequena festa de escritório — e quem estava ali, fugiu como se a próxima explosão fosse no segundo seguinte...\n\n O que você faz?");
+        createChoiceButtons();
+
+        choice1.setText("Abrir geladeira");
+        choice1.addActionListener((e) -> geladeira());
+        
+        choice2.setText("Abrir microondas");
+        choice2.addActionListener((e) -> microondas());
+        
+        choice3.setText("Voltar");
+        choice3.addActionListener((e) -> corredorEsquerdo());
+        
+        createInventoryButton();
+    }
+
+    public void geladeira(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("Você vê um monte de comida gostosa...\n\nMas agora não é hora pra isso Sargento! Foco na missão!");
+        createCloseInventoryButton((e)-> refeitorio());
+    }
+
+    public void microondas(){
+        clearPanels();
+        createTextPanel();
+        
+        if (hasItem("Bilhete")) {
+            mainTextArea.setText("O microondas está vazio agora. Você já pegou o bilhete.");
+            createCloseInventoryButton((e)-> refeitorio());
+        } else {
+            mainTextArea.setText("Estranhamente, você encontra um papel com nomes de cores escritas:\n\nVERDE, VERMELHO, AZUL, VERMELHO, VERDE");
+            createChoiceButtons();
+
+            choice1.setText("Pegar bilhete");
+            choice1.addActionListener((e)-> pegarBilhete());
+            
+            choice2.setText("Ignorar bilhete");
+            choice2.addActionListener((e)-> refeitorio()); // Corrigir: estava choice1
+            
+            createInventoryButton();
+        }
+    }
+    
+    public void pegarBilhete(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("Você pegou um bilhete com cores.");
+        
+        addToInventory("Bilhete");
+        createCloseInventoryButton((e)-> refeitorio());
+    }
+    
+    public void corredorDireito(){
+        
+    }
+
     public void sair(){
         clearPanels();
-        position = "sair";
         createTextPanel();
         mainTextArea.setText("Se você sair do prédio, irá fracassar na missão, e a bomba irá explodir...\n\n Você tem certeza?");
         createChoiceButtons();
@@ -109,7 +201,7 @@ public class Game{
     public void lose(){
         clearPanels();
         createTextPanel();
-        mainTextArea.setText("Por sua culpa, a bomba explodiu e causou danos irreparáveis para a cidade. Parabéns!\n\nVocê perdeu.\n\n Deseja tentar novamente?");
+        mainTextArea.setText("Por sua culpa, a bomba explodiu e causou danos irreparáveis para a cidade. Parabéns!\n\nVocê perdeu.\n\nDeseja tentar novamente?");
         createChoiceButtons();
         choice1.setText("Sim");
         choice1.addActionListener((e) -> introScreen());
@@ -126,8 +218,24 @@ public class Game{
         if (continueButtonPanel != null) continueButtonPanel.setVisible(false);
 
         createInventoryPanel();
-        createCloseInventoryButton();
+        createCloseInventoryButton((e)-> createGameScreen());
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // métodos auxiliares
     private void createTextPanel() {
@@ -227,23 +335,25 @@ public class Game{
         inventoryPanel.setBackground(Color.blue);
         inventoryPanel.setLayout(new GridLayout(1, 5));
 
-        item1 = new ItemButton("Item", normalFont);
-        item2 = new ItemButton("Item", normalFont);
-        item3 = new ItemButton("Item", normalFont);
-        item4 = new ItemButton("Item", normalFont);
-        item5 = new ItemButton("Item", normalFont);
+        ItemButton[] itemButtons = new ItemButton[5];
         
-        inventoryPanel.add(item1);
-        inventoryPanel.add(item2);
-        inventoryPanel.add(item3);
-        inventoryPanel.add(item4);
-        inventoryPanel.add(item5);
+        for (int i = 0; i < 5; i++) {
+            String itemText = (i < inventory.size()) ? inventory.get(i) : "Vazio";
+            itemButtons[i] = new ItemButton(itemText, normalFont);
+            
+            if (i < inventory.size()) {
+                final int index = i;
+                itemButtons[i].addActionListener((e) -> useItem(index));
+            }
+            
+            inventoryPanel.add(itemButtons[i]);
+        }
 
         con.add(inventoryPanel);
         inventoryPanel.setVisible(true);
     }
-    
-    private void createCloseInventoryButton() {
+        
+    private void createCloseInventoryButton(ActionListener action) {
         if (inventoryClosePanel != null) {
             con.remove(inventoryClosePanel);
         }
@@ -256,12 +366,62 @@ public class Game{
         inventoryCloseButton.setBackground(Color.black);
         inventoryCloseButton.setForeground(Color.white);
         inventoryCloseButton.setFont(normalFont);
-        inventoryCloseButton.addActionListener((e) -> createGameScreen());
+        inventoryCloseButton.addActionListener(action);
 
         inventoryClosePanel.add(inventoryCloseButton);
         con.add(inventoryClosePanel);
         inventoryClosePanel.setVisible(true);
     }
+
+    // metodos de inventario:
+
+    private void addToInventory(String item) {
+        inventory.add(item);
+    }
+
+    private boolean hasItem(String item) {
+        return inventory.contains(item);
+    }
+
+    private String getItemAt(int index) {
+        if (index >= 0 && index < inventory.size()) {
+            return inventory.get(index);
+        }
+        return null;
+    }
+
+    public void useItem(int index) {
+        String item = getItemAt(index);
+        if (item == null) return;
+        
+        switch (item) {
+            case "Bilhete":
+                usarBilhete();
+                break;
+            // adicionar mais itens aquiiiiiiiiii
+            default:
+                examinarItem(item);
+                break;
+        }
+    }
+
+
+    public void usarBilhete(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("Você examina o bilhete mais de perto:\n\nVERDE, VERMELHO, AZUL, VERMELHO, VERDE\n\nParece ser uma sequência de cores... Talvez seja um código para algo?");
+        createCloseInventoryButton((e)-> createInventoryScreen());
+    }
+
+    public void examinarItem(String item){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("Você examina o item: " + item + "\n\nNão parece ter nada especial sobre ele no momento.");
+        createCloseInventoryButton((e)-> createInventoryScreen());
+    }
+
+
+
 
     private void clearPanels() {
         // array com os paineis (dá pra melhorar mais eu acho)
