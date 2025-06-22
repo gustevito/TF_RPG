@@ -94,7 +94,7 @@ public class Game{
     public void createGameScreen(){
         clearPanels();
         createTextPanel();
-        mainTextArea.setText("Você está no saguão principal. A única informação concedida a você, é de que a bomba está trancada no acervo do escritório, ao lado da sala de reuniões.\n\nÀ sua esquerda e à sua direita, estende-se um corredor com diversas salas, e aos seus pés, você encontra um gravador.\nO que você faz?");
+        mainTextArea.setText("Você está no saguão principal. A única informação concedida a você, é de que a bomba está trancada no acervo do escritório, ao lado da sala de reuniões.\n\nÀ sua esquerda e à sua direita, estende-se um corredor com diversas salas, e aos seus pés, você encontra um gravador. O que você faz?");
         createChoiceButtons();
 
         choice1.setText("Pegar gravador");
@@ -129,10 +129,10 @@ public class Game{
         choice1.addActionListener((e) -> navigateTo(this::refeitorio));
         
         choice2.setText("Sala do CEO");
-        choice2.addActionListener((e) -> System.out.println("Foi ao corredor"));
+        choice2.addActionListener((e) -> navigateTo(this::ceo));
         
         choice3.setText("Banheiro");
-        choice3.addActionListener((e) -> System.out.println("Foi ao corredor"));
+        choice3.addActionListener((e) -> navigateTo(this::banheiro));
 
         choice4.setText("Voltar");
         choice4.addActionListener((e) -> navigateTo(this::createGameScreen));
@@ -193,6 +193,69 @@ public class Game{
         
         addToInventory("Bilhete");
         createCloseInventoryButton((e)-> navigateTo(this::refeitorio));
+    }
+
+        public void ceo(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("O contraste entre a bagunça caótica nos corredores da empresa e a limpeza esplêndida na sala do CEO, fazem você dar uma risadinha discreta.\n\nÉ cômico... É como se o dono da empresa nunca tivesse sequer pisado naquela sala.");
+        createChoiceButtons();
+
+        choice1.setText("Olhar armario");
+        choice1.addActionListener((e) -> navigateTo(this::armario));
+        
+        choice2.setText("Olhar mesa grande");
+        choice2.addActionListener((e)-> navigateTo(this::mesa));
+        
+        choice3.setText("Voltar");
+        choice3.addActionListener((e) -> navigateTo(this::corredorEsquerdo));
+        
+        createInventoryButton();
+    }
+
+    public void armario(){
+        clearPanels();
+        createTextPanel();
+        createChoiceButtons();
+        
+        if (hasItem("Tesoura")) {
+            mainTextArea.setText("O armário está vazio agora. Você já pegou a tesoura.");
+            createCloseInventoryButton((e)-> navigateTo(this::ceo));
+        } else {
+            mainTextArea.setText("Dentro, você encontra uma tesoura. Deseja pegá-la?\n\nPode ser útil para cortar os fios da bomba igual aos filmes...");
+            createChoiceButtons();
+
+            choice1.setText("Pegar tesoura");
+            choice1.addActionListener((e)-> navigateTo(this::pegarTesoura));
+            
+            choice2.setText("Voltar");
+            choice2.addActionListener((e)-> navigateTo(this::ceo));
+            
+            createInventoryButton();
+        }
+    }
+
+    public void mesa(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("Você encontra alguns papéis desinteressantes, e uma coleção de canetas que aparenta custar mais do que seu antigo salário.");
+        createCloseInventoryButton((e)-> navigateTo(this::ceo));
+    }
+
+    public void pegarTesoura(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("Você pegou uma tesoura.");
+        
+        addToInventory("Tesoura");
+        createCloseInventoryButton((e)-> navigateTo(this::ceo));
+    }
+
+    public void banheiro(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("Está trancado.");
+        createCloseInventoryButton((e)-> navigateTo(this::corredorEsquerdo));
     }
     
     public void corredorDireito(){
@@ -352,7 +415,7 @@ public class Game{
         ItemButton[] itemButtons = new ItemButton[5];
         
         for (int i = 0; i < 5; i++) {
-            String itemText = (i < inventory.size()) ? inventory.get(i) : "Vazio";
+            String itemText = (i < inventory.size()) ? inventory.get(i) : "-";
             itemButtons[i] = new ItemButton(itemText, normalFont);
             
             if (i < inventory.size()) {
@@ -412,6 +475,10 @@ public class Game{
             case "Bilhete":
                 usarBilhete();
                 break;
+
+            case "Tesoura":
+                usarTesoura();
+                break;
             // adicionar mais itens aquiiiiiiiiii
             default:
                 examinarItem(item);
@@ -424,6 +491,13 @@ public class Game{
         clearPanels();
         createTextPanel();
         mainTextArea.setText("Você examina o bilhete mais de perto:\n\nVERDE, VERMELHO, AZUL, VERMELHO, VERDE\n\nParece ser uma sequência de cores... Talvez seja um código para algo?");
+        createCloseInventoryButton((e)-> createInventoryScreen());
+    }
+
+    public void usarTesoura(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("É, de fato, uma tesoura.");
         createCloseInventoryButton((e)-> createInventoryScreen());
     }
 
