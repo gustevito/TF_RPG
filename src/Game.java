@@ -20,6 +20,8 @@ public class Game{
     private ArrayList<String> inventory = new ArrayList<>();
     private final int MAX_INVENTORY_SIZE = 5;
 
+    private Runnable currentScreenMethod;
+
     Font titleFont = new Font("Times New Roman", Font.PLAIN, 90);
     Font normalFont = new Font("Times New Roman", Font.PLAIN, 26);
     
@@ -56,7 +58,7 @@ public class Game{
         startButton.setBackground(Color.black);
         startButton.setForeground(Color.white);
         startButton.setFont(normalFont);
-        startButton.addActionListener((e)-> introScreen()); // lambda pra nao precisar de um handler
+        startButton.addActionListener((e)-> navigateTo(this::introScreen));
 
         // adicionar componentes aos painéis
         titleNamePanel.add(titleNameLabel);
@@ -68,6 +70,18 @@ public class Game{
         
         // tornar a janela visível APÓS adicionar todos os componentes
         window.setVisible(true);
+    }
+
+    // Método auxiliar para navegação (aqui eu usei IA, tava quebrando muito a cabeça pra saber como implementar isso)
+    private void navigateTo(Runnable screenMethod) {
+        currentScreenMethod = screenMethod;
+        screenMethod.run();
+    }
+
+    private void returnToPreviousScreen() {
+        if (currentScreenMethod != null) {
+            currentScreenMethod.run();
+        }
     }
 
     public void introScreen(){
@@ -84,16 +98,16 @@ public class Game{
         createChoiceButtons();
 
         choice1.setText("Pegar gravador");
-        choice1.addActionListener((e) -> gravador());
+        choice1.addActionListener((e) -> navigateTo(this::gravador));
         
         choice2.setText("Corredor esquerdo");
-        choice2.addActionListener((e) -> corredorEsquerdo());
+        choice2.addActionListener((e) -> navigateTo(this::corredorEsquerdo));
         
         choice3.setText("Corredor direito");
         choice3.addActionListener((e) -> System.out.println("Foi ao corredor"));
 
         choice4.setText("Sair");
-        choice4.addActionListener((e) -> sair());
+        choice4.addActionListener((e) -> navigateTo(this::sair));
         
         createInventoryButton();
     }
@@ -102,7 +116,7 @@ public class Game{
         clearPanels();
         createTextPanel();
         mainTextArea.setText("*(clique)* ...\n\n ...Sabe, Sargento... Tem gente que só anda sozinho... Não se mistura, não se divide.\n\nPense ao contrário para talvez salvá-los de meu joguinho. Heheheh...");
-        createCloseInventoryButton((e)-> createGameScreen());
+        createCloseInventoryButton((e)-> navigateTo(this::createGameScreen));
     }
 
     public void corredorEsquerdo(){
@@ -112,7 +126,7 @@ public class Game{
         createChoiceButtons();
 
         choice1.setText("Refeitório");
-        choice1.addActionListener((e) -> refeitorio());
+        choice1.addActionListener((e) -> navigateTo(this::refeitorio));
         
         choice2.setText("Sala do CEO");
         choice2.addActionListener((e) -> System.out.println("Foi ao corredor"));
@@ -121,7 +135,7 @@ public class Game{
         choice3.addActionListener((e) -> System.out.println("Foi ao corredor"));
 
         choice4.setText("Voltar");
-        choice4.addActionListener((e) -> createGameScreen());
+        choice4.addActionListener((e) -> navigateTo(this::createGameScreen));
         
         createInventoryButton();
     }
@@ -133,13 +147,13 @@ public class Game{
         createChoiceButtons();
 
         choice1.setText("Abrir geladeira");
-        choice1.addActionListener((e) -> geladeira());
+        choice1.addActionListener((e) -> navigateTo(this::geladeira));
         
         choice2.setText("Abrir microondas");
-        choice2.addActionListener((e) -> microondas());
+        choice2.addActionListener((e) -> navigateTo(this::microondas));
         
         choice3.setText("Voltar");
-        choice3.addActionListener((e) -> corredorEsquerdo());
+        choice3.addActionListener((e) -> navigateTo(this::corredorEsquerdo));
         
         createInventoryButton();
     }
@@ -148,7 +162,7 @@ public class Game{
         clearPanels();
         createTextPanel();
         mainTextArea.setText("Você vê um monte de comida gostosa...\n\nMas agora não é hora pra isso Sargento! Foco na missão!");
-        createCloseInventoryButton((e)-> refeitorio());
+        createCloseInventoryButton((e)-> navigateTo(this::refeitorio));
     }
 
     public void microondas(){
@@ -157,16 +171,16 @@ public class Game{
         
         if (hasItem("Bilhete")) {
             mainTextArea.setText("O microondas está vazio agora. Você já pegou o bilhete.");
-            createCloseInventoryButton((e)-> refeitorio());
+            createCloseInventoryButton((e)-> navigateTo(this::refeitorio));
         } else {
             mainTextArea.setText("Estranhamente, você encontra um papel com nomes de cores escritas:\n\nVERDE, VERMELHO, AZUL, VERMELHO, VERDE");
             createChoiceButtons();
 
             choice1.setText("Pegar bilhete");
-            choice1.addActionListener((e)-> pegarBilhete());
+            choice1.addActionListener((e)-> navigateTo(this::pegarBilhete));
             
             choice2.setText("Ignorar bilhete");
-            choice2.addActionListener((e)-> refeitorio()); // Corrigir: estava choice1
+            choice2.addActionListener((e)-> navigateTo(this::refeitorio));
             
             createInventoryButton();
         }
@@ -178,7 +192,7 @@ public class Game{
         mainTextArea.setText("Você pegou um bilhete com cores.");
         
         addToInventory("Bilhete");
-        createCloseInventoryButton((e)-> refeitorio());
+        createCloseInventoryButton((e)-> navigateTo(this::refeitorio));
     }
     
     public void corredorDireito(){
@@ -192,19 +206,19 @@ public class Game{
         createChoiceButtons();
         
         choice1.setText("Sim");
-        choice1.addActionListener((e) -> lose());
+        choice1.addActionListener((e) -> navigateTo(this::lose));
 
         choice2.setText("Não");
-        choice2.addActionListener((e) -> createGameScreen());
+        choice2.addActionListener((e) -> navigateTo(this::createGameScreen));
     }
 
     public void lose(){
         clearPanels();
         createTextPanel();
-        mainTextArea.setText("Por sua culpa, a bomba explodiu e causou danos irreparáveis para a cidade. Parabéns!\n\nVocê perdeu.\n\nDeseja tentar novamente?");
+        mainTextArea.setText("Por sua culpa, a bomba explodiu e causou danos irreparáveis para a cidade. Parabéns! >:(\n\nVocê perdeu.\n\nDeseja tentar novamente?");
         createChoiceButtons();
         choice1.setText("Sim");
-        choice1.addActionListener((e) -> introScreen());
+        choice1.addActionListener((e) -> navigateTo(this::introScreen));
         
         choice2.setText("Não");
         choice2.addActionListener((e) -> System.exit(0));
@@ -218,7 +232,7 @@ public class Game{
         if (continueButtonPanel != null) continueButtonPanel.setVisible(false);
 
         createInventoryPanel();
-        createCloseInventoryButton((e)-> createGameScreen());
+        createCloseInventoryButton((e)-> returnToPreviousScreen());
     }
 
 
@@ -274,7 +288,7 @@ public class Game{
         continueButton.setBackground(Color.black);
         continueButton.setForeground(Color.white);
         continueButton.setFont(normalFont);
-        continueButton.addActionListener((e) -> createGameScreen());
+        continueButton.addActionListener((e) -> navigateTo(this::createGameScreen));
 
         continueButtonPanel.add(continueButton);
         con.add(continueButtonPanel);
