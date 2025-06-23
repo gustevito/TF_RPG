@@ -8,17 +8,27 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
 
 public class Game{
     JFrame window;
     Container con;
-    JPanel titleNamePanel, startButtonPanel, mainTextPanel, continueButtonPanel, choiceButtonPanel, inventoryButtonPanel, inventoryPanel, inventoryClosePanel;
-    JLabel titleNameLabel;
-    JButton startButton, continueButton, choice1, choice2, choice3, choice4, inventoryButton, item1, item2, item3, item4, item5, inventoryCloseButton;
+    JPanel titleNamePanel, startButtonPanel, mainTextPanel, continueButtonPanel, choiceButtonPanel, inventoryButtonPanel, inventoryPanel, inventoryClosePanel, inputPanel;
+    JTextField colorInput;
+    JLabel titleNameLabel, promptLabel;
+    JButton startButton, continueButton, choice1, choice2, choice3, choice4, inventoryButton, item1, item2, item3, item4, item5, inventoryCloseButton, submitButton;
     JTextArea mainTextArea;
 
     private ArrayList<String> inventory = new ArrayList<>();
-    private final int MAX_INVENTORY_SIZE = 5;
+    // private final int MAX_INVENTORY_SIZE = 5;
+
+    // parar o metodo arquivo():
+    private ArrayList<String> inputSequence = new ArrayList<>();
+    private final String[] CORRECT_SEQUENCE = {"VERDE", "VERMELHO", "AZUL", "VERMELHO", "VERDE"};
+    private ArrayList<Integer> respostaPuzzleFinal;
+    private int numeroPrimoCorreto;
+
 
     private Runnable currentScreenMethod;
 
@@ -104,7 +114,7 @@ public class Game{
         choice2.addActionListener((e) -> navigateTo(this::corredorEsquerdo));
         
         choice3.setText("Corredor direito");
-        choice3.addActionListener((e) -> System.out.println("Foi ao corredor"));
+        choice3.addActionListener((e) -> navigateTo(this::corredorDireito));
 
         choice4.setText("Sair");
         choice4.addActionListener((e) -> navigateTo(this::sair));
@@ -115,8 +125,207 @@ public class Game{
     public void gravador(){
         clearPanels();
         createTextPanel();
-        mainTextArea.setText("*(clique)* ...\n\n ...Sabe, Sargento... Tem gente que só anda sozinho... Não se mistura, não se divide.\n\nPense ao contrário para talvez salvá-los de meu joguinho. Heheheh...");
+        mainTextArea.setText("*(clique)* ...\n\nUm só te salva… Mas não é número de turma, nem par na dança. Ele caminha sozinho, feito lobo velho — e não aceita dividir o palco com ninguém. Boa sorte, sargento.");
         createCloseInventoryButton((e)-> navigateTo(this::createGameScreen));
+    }
+
+    public void corredorDireito(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("À direita do corredor, você se depara com um cenário caótico. Livros e papéis rasgados atirados pelos cantos. Aqui, você tem visão para a sala de reuniões, a sala do supervisor, e ao acervo da empresa.\n\nPara onde você vai?");
+        createChoiceButtons();
+
+        choice1.setText("Sala de reuniões");
+        choice1.addActionListener((e) -> navigateTo(this::reunioes));
+        
+        choice2.setText("Sala do supervisor");
+        choice2.addActionListener((e) -> navigateTo(this::supervisor));
+        
+        choice3.setText("Acervo");
+        choice3.addActionListener((e) -> navigateTo(this::acervo));
+
+        choice4.setText("Voltar");
+        choice4.addActionListener((e) -> navigateTo(this::createGameScreen));
+        
+        createInventoryButton();
+    }
+
+    public void reunioes(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("Está trancada. Mas através da sala escura, você consegue enxergar uma luz vermelha piscando pela janela que separa a sala do acervo.\n\nVocê sente seu corpo arrepiar.");
+        createCloseInventoryButton((e)-> navigateTo(this::corredorDireito));
+    }
+
+    public void supervisor(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("Ao encostar na maçaneta, você percebe que a porta da sala foi arrombada com força bruta.\n\nAo adentrar a sala tomada pela desordem, seus olhos se fixam em um computador ainda aceso, repousando sobre uma escrivaninha em meio ao caos.\n\nO que você faz?");
+        createChoiceButtons();
+
+        choice1.setText("Ir ao computador");
+        choice1.addActionListener((e) -> navigateTo(this::computador));
+        
+        choice2.setText("Voltar");
+        choice2.addActionListener((e) -> navigateTo(this::corredorDireito));
+        
+        createInventoryButton();
+    }
+
+    public void computador(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("Ao se aproximar, você repara em duas gavetas da escrivaninha cobertas de rabiscos. Na tela do computador, um único arquivo executável se destaca na área de trabalho: SOMIRP.exe.'.\n\nO que você faz?");
+        createChoiceButtons();
+
+        choice1.setText("Abrir arquivo");
+        choice1.addActionListener((e) -> navigateTo(this::arquivo));
+        
+        choice2.setText("Abrir gaveta");
+        choice2.addActionListener((e) -> navigateTo(this::gaveta));
+        
+        choice3.setText("Voltar");
+        choice3.addActionListener((e) -> navigateTo(this::corredorDireito));
+        
+        createInventoryButton();
+    }
+
+    public void arquivo(){
+        clearPanels();
+        createTextPanel();
+        inputSequence.clear(); // reset sequencia
+        
+        mainTextArea.setText("O arquivo SOMIRP.exe abre uma janela simples com o texto:\n\n'DIGITE A SEQUÊNCIA DE CORES NA ORDEM CORRETA'\n\nProgresso: " + inputSequence.size() + "/5");
+        
+        createColorInputPanel();
+        createCloseInventoryButton((e)-> navigateTo(this::computador));
+    }
+
+    public void sequenciaCorreta(){
+        clearPanels();
+        createTextPanel();
+
+        ArrayList<Integer> numeros = gerarNumerosComUmPrimo();
+        StringBuilder numerosTexto = new StringBuilder();
+        for (int num : numeros) {
+            numerosTexto.append(num).append("  ");
+        }
+
+        mainTextArea.setText("*DING*\n\nSEQUÊNCIA CORRETA\n\nBOA SORTE:\n\n" + numerosTexto.toString().trim());
+        respostaPuzzleFinal = new ArrayList<>(numeros);
+        createCloseInventoryButton((e)-> navigateTo(this::computador));
+    }
+
+    public void sequenciaIncorreta(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("*BZZT*\n\n'ERROU!'\n\n'TENTE NOVAMENTE.'\n\nO arquivo se reinicia.");
+        createChoiceButtons();
+        
+        choice1.setText("Tentar novamente");
+        choice1.addActionListener((e) -> navigateTo(this::arquivo));
+        
+        choice2.setText("Sair do programa");
+        choice2.addActionListener((e) -> navigateTo(this::computador));
+    }
+
+    public void gaveta(){
+        clearPanels();
+        createTextPanel();
+        
+        if (hasItem("Chave")) {
+            mainTextArea.setText("A gaveta está vazia. Você já pegou a chave.");
+            createCloseInventoryButton((e)-> navigateTo(this::computador));
+        } else {
+            mainTextArea.setText("Dentro, você encontra uma pequena chave.");
+            createChoiceButtons();
+
+            choice1.setText("Pegar chave");
+            choice1.addActionListener((e)-> navigateTo(this::pegarChave));
+            
+            choice2.setText("Ignorar chave");
+            choice2.addActionListener((e)-> navigateTo(this::computador));
+            
+            createInventoryButton();
+        }
+    }
+
+    public void acervo(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("O acervo se encontra um verdadeiro caos. Folhas rasgadas, registros queimados, e uma bomba prestes a detonar se encontra logo a sua frente.\n\nNela, está conectado um teclado sujo e uma pequena tela piscando em vermelho.\n\nO que você faz?");
+        createChoiceButtons();
+        
+        choice1.setText("Ler tela");
+        choice1.addActionListener((e) -> navigateTo(this::puzzleFinal));
+        
+        choice2.setText("Voltar");
+        choice2.addActionListener((e) -> navigateTo(this::corredorDireito));
+    }
+
+    public void puzzleFinal(){
+        clearPanels();
+        createTextPanel();
+        // verifica se a lista ja foi gerada
+        if (respostaPuzzleFinal == null || respostaPuzzleFinal.isEmpty()) {
+            mainTextArea.setText("A tela pisca em vermelho:\n\n'ACESSO NEGADO. RESOLVER OMIRP.exe.'\n\n...Resolver o quê??");
+            createCloseInventoryButton((e)-> navigateTo(this::acervo));
+            return;
+        }
+        // nº primo da lista gerada
+        for (int num : respostaPuzzleFinal) {
+            if (ehPrimo(num)) {
+                numeroPrimoCorreto = num;
+                break;
+            }
+        }
+        
+        StringBuilder numerosTexto = new StringBuilder();
+        for (int i = 0; i < respostaPuzzleFinal.size(); i++) {
+            numerosTexto.append(respostaPuzzleFinal.get(i));
+            if (i < respostaPuzzleFinal.size() - 1) {
+                numerosTexto.append(", ");
+            }
+        }
+        mainTextArea.setText("A tela da bomba exibe uma mensagem final:\n\n'UM NÚMERO, UMA CHANCE. BOA SORTE!'");
+        createBombInputPanel();
+        createCloseInventoryButton((e)-> navigateTo(this::acervo));
+    }
+
+    public void numeroNaoNaLista(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("BEEP BEEP BEEP\n\n'NÚMERO NÃO ESTÁ NA SEQUÊNCIA FORNECIDA!'\n\n'VOCÊ FALHOU! HAHAHAHAHAH'");
+    
+        createCloseInventoryButton((e)-> navigateTo(this::lose));
+    }
+
+    public void vitoria(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("*CLIQUE*\n\nA bomba foi desarmada!\nMISSÃO CUMPRIDA!!!!\nVocê salvou Porto Alegre! :)");
+        createChoiceButtons();
+        
+        choice1.setText("Jogar novamente");
+        choice1.addActionListener((e) -> {
+
+            // reset das variáveis para novo jogo
+            respostaPuzzleFinal = null;
+            inventory.clear();
+            navigateTo(this::introScreen);
+        });
+        
+        choice2.setText("Sair do jogo");
+        choice2.addActionListener((e) -> System.exit(0));
+    }
+
+    public void pegarChave(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("Você pegou a chave.");
+        
+        addToInventory("Chave");
+        createCloseInventoryButton((e)-> navigateTo(this::supervisor));
     }
 
     public void corredorEsquerdo(){
@@ -198,7 +407,7 @@ public class Game{
         public void ceo(){
         clearPanels();
         createTextPanel();
-        mainTextArea.setText("O contraste entre a bagunça caótica nos corredores da empresa e a limpeza esplêndida na sala do CEO, fazem você dar uma risadinha discreta.\n\nÉ cômico... É como se o dono da empresa nunca tivesse sequer pisado naquela sala.");
+        mainTextArea.setText("O contraste entre a bagunça caótica nos corredores da empresa e a limpeza esplêndida na sala do CEO, fazem você dar uma risadinha discreta.\n\nCômico... É como se o dono da empresa nunca tivesse sequer pisado naquela sala.");
         createChoiceButtons();
 
         choice1.setText("Olhar armario");
@@ -257,10 +466,6 @@ public class Game{
         mainTextArea.setText("Está trancado.");
         createCloseInventoryButton((e)-> navigateTo(this::corredorEsquerdo));
     }
-    
-    public void corredorDireito(){
-        
-    }
 
     public void sair(){
         clearPanels();
@@ -314,7 +519,123 @@ public class Game{
 
 
 
+
+    
+
+
+
     // métodos auxiliares
+
+    // OMIRP.exe
+    private void createColorInputPanel() {
+        if (inputPanel != null) {
+            con.remove(inputPanel);
+        }
+        
+        inputPanel = new JPanel();
+        inputPanel.setBounds(200, 380, 400, 100);
+        inputPanel.setBackground(Color.black);
+        inputPanel.setLayout(new GridLayout(3, 1));
+        
+        promptLabel = new JLabel("Digite a cor " + (inputSequence.size() + 1) + ":");
+        promptLabel.setForeground(Color.white);
+        promptLabel.setFont(normalFont);
+        
+        colorInput = new JTextField();
+        colorInput.setFont(normalFont);
+        colorInput.setBackground(Color.white);
+        colorInput.setForeground(Color.black);
+        
+        submitButton = new JButton("Confirmar");
+        submitButton.setBackground(Color.black);
+        submitButton.setForeground(Color.white);
+        submitButton.setFont(normalFont);
+        submitButton.addActionListener((e) -> processColorInput());
+        
+        inputPanel.add(promptLabel);
+        inputPanel.add(colorInput);
+        inputPanel.add(submitButton);
+        
+        con.add(inputPanel);
+        inputPanel.setVisible(true);
+    }
+
+    private void processColorInput() {
+        String input = colorInput.getText().trim().toUpperCase();
+        
+        if (input.isEmpty()) return;
+        
+        inputSequence.add(input);
+        
+        int currentIndex = inputSequence.size() - 1;
+        if (!input.equals(CORRECT_SEQUENCE[currentIndex])) {
+            navigateTo(this::sequenciaIncorreta);
+            return;
+        }
+        
+        if (inputSequence.size() >= 5) {
+            navigateTo(this::sequenciaCorreta);
+        } else {
+            colorInput.setText("");
+            promptLabel.setText("Digite a cor " + (inputSequence.size() + 1) + ":");
+            mainTextArea.setText("O arquivo SOMIRP.exe abre uma janela simples com o texto:\n\n'DIGITE A SEQUÊNCIA DE CORES NA ORDEM CORRETA'\n\nVocê precisa inserir 5 cores. Progresso: " + inputSequence.size() + "/5\n\nCor aceita! Continue...");
+        }
+    }
+
+
+
+
+    // BOMBA
+    private void createBombInputPanel() {
+    if (inputPanel != null) {
+        con.remove(inputPanel);
+    }
+    
+    inputPanel = new JPanel();
+    inputPanel.setBounds(200, 300, 400, 100);
+    inputPanel.setBackground(Color.black);
+    inputPanel.setLayout(new GridLayout(3, 1));
+    
+    colorInput = new JTextField();
+    colorInput.setFont(normalFont);
+    colorInput.setBackground(Color.white);
+    colorInput.setForeground(Color.black);
+    
+    submitButton = new JButton("DESARMAR BOMBA");
+    submitButton.setBackground(Color.red);
+    submitButton.setForeground(Color.white);
+    submitButton.setFont(normalFont);
+    submitButton.addActionListener((e) -> processBombInput());
+    
+    inputPanel.add(promptLabel);
+    inputPanel.add(colorInput);
+    inputPanel.add(submitButton);
+    
+    con.add(inputPanel);
+    inputPanel.setVisible(true);
+}
+
+private void processBombInput() {
+    String input = colorInput.getText().trim();
+    
+    if (input.isEmpty()) return;
+    
+    int numeroDigitado = Integer.parseInt(input);
+    
+    // verifica se o número está na lista gerada anteriormente
+    if (!respostaPuzzleFinal.contains(numeroDigitado)) {
+        navigateTo(this::numeroNaoNaLista);
+        return;
+    }
+    
+    // ebaaaa ganhou
+    navigateTo(this::vitoria);
+}
+
+
+
+
+
     private void createTextPanel() {
         if (mainTextPanel != null) {
             con.remove(mainTextPanel);
@@ -471,15 +792,17 @@ public class Game{
         String item = getItemAt(index);
         if (item == null) return;
         
+        // adicionar mais itens aquiiiiiiiiii
         switch (item) {
             case "Bilhete":
                 usarBilhete();
                 break;
-
             case "Tesoura":
                 usarTesoura();
                 break;
-            // adicionar mais itens aquiiiiiiiiii
+            case "Chave":
+                usarTesoura();
+                break;
             default:
                 examinarItem(item);
                 break;
@@ -501,12 +824,56 @@ public class Game{
         createCloseInventoryButton((e)-> createInventoryScreen());
     }
 
+    public void usarChave(){
+        clearPanels();
+        createTextPanel();
+        mainTextArea.setText("É, de fato, uma chave.");
+        createCloseInventoryButton((e)-> createInventoryScreen());
+    }
+
     public void examinarItem(String item){
         clearPanels();
         createTextPanel();
         mainTextArea.setText("Você examina o item: " + item + "\n\nNão parece ter nada especial sobre ele no momento.");
         createCloseInventoryButton((e)-> createInventoryScreen());
     }
+
+
+
+
+    
+    // nº primo
+    public ArrayList<Integer> gerarNumerosComUmPrimo() {
+        ArrayList<Integer> lista = new ArrayList<>();
+        Random random = new Random();
+
+        // gera 1 primo
+        while (lista.size() < 1) {
+            int numero = random.nextInt(100) + 1;
+            if (ehPrimo(numero) && !lista.contains(numero)) {
+                lista.add(numero);
+            }
+        }
+        // gera 4 não primos
+        while (lista.size() < 5) {
+            int numero = random.nextInt(100) + 1;
+            if (!ehPrimo(numero) && !lista.contains(numero)) {
+                lista.add(numero);
+            }
+        }
+        Collections.shuffle(lista);
+        return lista;
+    }
+
+
+    public static boolean ehPrimo(int n) {
+        if (n < 2) return false;
+        for (int i = 2; i <= Math.sqrt(n); i++) {
+            if (n % i == 0) return false;
+        }
+        return true;
+    }
+
 
 
 
@@ -525,6 +892,13 @@ public class Game{
                 con.remove(painel);
             }
         }
+
+        // metodo arquivo():
+        if (inputPanel != null) {
+            inputPanel.setVisible(false);
+            con.remove(inputPanel);
+        }
+
         con.revalidate();
         con.repaint();
     }
