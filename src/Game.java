@@ -587,50 +587,50 @@ public class Game{
 
     // BOMBA
     private void createBombInputPanel() {
-    if (inputPanel != null) {
-        con.remove(inputPanel);
+        if (inputPanel != null) {
+            con.remove(inputPanel);
+        }
+        
+        inputPanel = new JPanel();
+        inputPanel.setBounds(200, 300, 400, 100);
+        inputPanel.setBackground(Color.black);
+        inputPanel.setLayout(new GridLayout(3, 1));
+        
+        colorInput = new JTextField();
+        colorInput.setFont(normalFont);
+        colorInput.setBackground(Color.white);
+        colorInput.setForeground(Color.black);
+        
+        submitButton = new JButton("DESARMAR BOMBA");
+        submitButton.setBackground(Color.red);
+        submitButton.setForeground(Color.white);
+        submitButton.setFont(normalFont);
+        submitButton.addActionListener((e) -> processBombInput());
+        
+        inputPanel.add(promptLabel);
+        inputPanel.add(colorInput);
+        inputPanel.add(submitButton);
+        
+        con.add(inputPanel);
+        inputPanel.setVisible(true);
     }
-    
-    inputPanel = new JPanel();
-    inputPanel.setBounds(200, 300, 400, 100);
-    inputPanel.setBackground(Color.black);
-    inputPanel.setLayout(new GridLayout(3, 1));
-    
-    colorInput = new JTextField();
-    colorInput.setFont(normalFont);
-    colorInput.setBackground(Color.white);
-    colorInput.setForeground(Color.black);
-    
-    submitButton = new JButton("DESARMAR BOMBA");
-    submitButton.setBackground(Color.red);
-    submitButton.setForeground(Color.white);
-    submitButton.setFont(normalFont);
-    submitButton.addActionListener((e) -> processBombInput());
-    
-    inputPanel.add(promptLabel);
-    inputPanel.add(colorInput);
-    inputPanel.add(submitButton);
-    
-    con.add(inputPanel);
-    inputPanel.setVisible(true);
-}
 
-private void processBombInput() {
-    String input = colorInput.getText().trim();
-    
-    if (input.isEmpty()) return;
-    
-    int numeroDigitado = Integer.parseInt(input);
-    
-    // verifica se o número está na lista gerada anteriormente
-    if (!respostaPuzzleFinal.contains(numeroDigitado)) {
-        navigateTo(this::numeroNaoNaLista);
-        return;
+    private void processBombInput() {
+        String input = colorInput.getText().trim();
+        
+        if (input.isEmpty()) return;
+        
+        int numeroDigitado = Integer.parseInt(input);
+        
+        // verifica se o número está na lista gerada anteriormente
+        if (!respostaPuzzleFinal.contains(numeroDigitado)) {
+            navigateTo(this::numeroNaoNaLista);
+            return;
+        }
+        
+        // ebaaaa ganhou
+        navigateTo(this::vitoria);
     }
-    
-    // ebaaaa ganhou
-    navigateTo(this::vitoria);
-}
 
 
 
@@ -801,7 +801,7 @@ private void processBombInput() {
                 usarTesoura();
                 break;
             case "Chave":
-                usarTesoura();
+                usarChave();
                 break;
             default:
                 examinarItem(item);
